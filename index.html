@@ -1,0 +1,813 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Harmit & Purnima Wedding Invitation</title>
+    <!-- Load Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        /* Custom styles for a formal wedding invitation aesthetic */
+        :root {
+            /* --- LAVENDER COLOR SCHEME --- */
+            --primary-color: #67417A; /* Deep Lavender / Plum */
+            --secondary-color: #ffffff; /* Pure White Background */
+            --accent-color: #B19CD9; /* Light Lavender / Periwinkle for accents and links (original selected color) */
+            --dark-text: #4a4a4a;
+            --shadow-color: rgba(0, 0, 0, 0.05);
+        }
+
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: var(--secondary-color);
+            color: var(--dark-text);
+            min-height: 100vh;
+            
+            /* --- FLORAL BACKGROUND PATTERN --- */
+            background-image: url("data:image/svg+xml,%3Csvg width='100' height='100' viewBox='0 0 100 100' xmlns='http://www.w3.org/2000/svg'%3E%3Cdefs%3E%3Cpattern id='a' width='100' height='100' patternUnits='userSpaceOnUse'%3E%3Cg opacity='0.1'%3E%3Cpath fill='%23B19CD9' d='M25 50a10 10 0 01-20 0 10 10 0 0120 0zM75 50a10 10 0 01-20 0 10 10 0 0120 0zM50 25a10 10 0 01-20 0 10 10 0 0120 0zM50 75a10 10 0 01-20 0 10 10 0 0120 0z'/%3E%3Ccircle cx='50' cy='50' r='5' fill='%23B19CD9' opacity='0.3'/%3E%3C/g%3E%3C/pattern%3E%3C/defs%3E%3Crect width='100%25' height='100%25' fill='url(%23a)'/%3E%3C/svg%3E");
+            background-size: 100px 100px;
+            background-attachment: fixed;
+        }
+
+        .header-bg {
+            background-color: var(--primary-color);
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.2);
+        }
+
+        .btn-primary {
+            background-color: var(--primary-color);
+            transition: background-color 0.2s, transform 0.1s;
+        }
+        .btn-primary:hover {
+            background-color: var(--accent-color); 
+            transform: translateY(-1px);
+        }
+
+        .event-card-with-image {
+            /* Remove border-left for cards with images */
+            border-left: none;
+            cursor: pointer;
+            overflow: hidden; /* Ensure image corners are contained */
+            padding: 0; /* Adjust padding for the content area inside */
+        }
+
+        .event-card {
+            border-left: 5px solid var(--accent-color);
+            transition: transform 0.2s, box-shadow 0.2s;
+            cursor: pointer;
+        }
+        .event-card:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 10px 20px -5px rgba(177, 156, 217, 0.4), 0 4px 6px -2px var(--shadow-color);
+        }
+
+        .modal-overlay {
+            background-color: rgba(0, 0, 0, 0.75);
+        }
+        .modal-content {
+            background-color: var(--secondary-color);
+            max-height: 90vh;
+            overflow-y: auto;
+        }
+
+        /* --- Tile Styling --- */
+        .home-tile {
+            background-color: var(--primary-color);
+            transition: transform 0.3s, box-shadow 0.3s, background-color 0.3s, border-color 0.3s;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.2);
+            position: relative;
+            overflow: hidden;
+            border: 4px solid var(--accent-color);
+        }
+        .home-tile:hover {
+            transform: scale(1.05);
+            box-shadow: 0 8px 20px rgba(0, 0, 0, 0.3);
+        }
+        
+        /* UPDATED: Selected State for Tile - Now uses White background */
+        .tile-selected {
+            background-color: var(--secondary-color) !important; /* Changed to White */
+            color: var(--primary-color) !important;
+            border-color: var(--primary-color) !important;
+            transform: scale(1.05);
+            /* Adjusted shadow for a brighter white card */
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.3) !important; 
+        }
+        .tile-selected h2 {
+            color: var(--primary-color) !important;
+        }
+        .tile-selected svg {
+             color: var(--primary-color) !important;
+        }
+
+
+        /* Slider Specific CSS */
+        .slider-container {
+            width: 100%;
+            overflow: hidden;
+            border-radius: 1rem;
+            box-shadow: 0 10px 20px rgba(0, 0, 0, 0.1);
+        }
+        .slider-wrapper {
+            display: flex;
+            transition: transform 0.5s ease-in-out;
+        }
+        .slider-wrapper img {
+            min-width: 100%;
+            height: auto;
+            object-fit: cover;
+        }
+        
+        /* Event Card Image Styling */
+        .event-image {
+            width: 100%;
+            height: 200px; /* Fixed height for visual consistency */
+            object-fit: cover;
+        }
+
+        /* Language Button Styling */
+        #language-toggle {
+            cursor: pointer;
+            border: 2px solid var(--primary-color);
+            color: var(--primary-color);
+            background-color: var(--secondary-color);
+            font-weight: 700;
+            padding: 0.5rem 1rem;
+            font-size: 1rem;
+            transition: all 0.2s;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+            user-select: none;
+        }
+        #language-toggle:hover {
+            background-color: var(--primary-color);
+            color: white;
+            box-shadow: 0 6px 8px rgba(0, 0, 0, 0.2);
+        }
+    </style>
+</head>
+<body>
+
+    <!-- Main Application Container -->
+    <div id="app-container" class="min-h-screen flex flex-col items-center pb-8">
+
+        <!-- --- MASTHEAD HEADER --- -->
+        <header class="header-bg w-full p-8 md:p-12 text-center shadow-lg">
+            <div class="max-w-4xl mx-auto">
+                 <!-- HEADER TEXT: INVITE LINE -->
+                <p id="home-invite" class="text-xl font-extralight tracking-widest text-white/90 mb-4">
+                    You are invited to celebrate the love of
+                </p>
+                <!-- Couple's Names -->
+                <h1 class="text-6xl md:text-7xl font-light tracking-widest text-white/95 flex items-center justify-center flex-wrap">
+                    <svg class="w-10 h-10 md:w-14 md:h-14 text-accent-color mr-4 hidden sm:block" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.2" d="M10 14l-4 4m4-4l-4-4m4 4h10"/></svg>
+                    Harmit 
+                    <span class="text-4xl mx-2 font-normal text-accent-color">&</span> 
+                    Purnima
+                    <svg class="w-10 h-10 md:w-14 md:h-14 text-accent-color ml-4 hidden sm:block transform rotate-180" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.2" d="M10 14l-4 4m4-4l-4-4m4 4h10"/></svg>
+                </h1>
+                
+                <div class="h-1px w-32 bg-accent-color mx-auto my-6 opacity-50"></div>
+
+                <!-- DATE LINE -->
+                <p id="home-date" class="text-2xl md:text-3xl mt-4 font-light text-white/90 tracking-wide">
+                    05-07 December 2025 | Indore, India
+                </p>
+            </div>
+            
+            <!-- Language Toggle Button -->
+            <div class="mt-6 flex justify-center">
+                <button id="language-toggle" class="px-3 py-1 text-sm rounded-full text-white bg-accent-color hover:bg-white hover:text-primary-color shadow-md" onclick="toggleLanguage()">
+                    हिन्दी / EN
+                </button>
+            </div>
+        </header>
+
+        <!-- --- NAVIGATION TILES (Control Panel) --- -->
+        <div class="w-full max-w-sm mx-auto mt-10 p-4"> 
+            <div class="grid grid-cols-2 gap-4">
+                <!-- PHOTOS TILE -->
+                <div id="photos-tile" onclick="selectView('photos')" class="home-tile p-4 md:p-6 rounded-xl text-center text-white cursor-pointer flex flex-col justify-center items-center">
+                    <svg class="w-8 h-8 md:w-10 md:h-10 mb-2 text-accent-color" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z"></path></svg>
+                    <h2 id="tile-photos-text" class="text-xl font-bold tracking-wide">Photos</h2>
+                </div>
+
+                <!-- SCHEDULE TILE -->
+                <div id="schedule-tile" onclick="selectView('schedule')" class="home-tile p-4 md:p-6 rounded-xl text-center text-white cursor-pointer flex flex-col justify-center items-center">
+                    <svg class="w-8 h-8 md:w-10 md:h-10 mb-2 text-accent-color" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7V3m8 4V3m-4 4h.01M3 21h18a2 2 0 002-2V7a2 2 0 00-2-2H3a2 2 0 00-2 2v12a2 2 0 002 2z"></path></svg>
+                    <h2 id="tile-schedule-text" class="text-xl font-bold tracking-wide">Schedule</h2>
+                </div>
+            </div>
+        </div>
+
+        <!-- --- DYNAMIC CONTENT AREA (SPA) --- -->
+        <div id="content-container" class="w-full max-w-4xl px-4 md:px-8 mt-10">
+            
+            <!-- --- 1. SCHEDULE VIEW --- -->
+            <div id="schedule-view" class="w-full">
+                 <!-- Date Selector -->
+                <div class="bg-white p-6 rounded-xl shadow-lg border border-gray-100 mt-6">
+                    <!-- DROPDOWN LABEL TEXT -->
+                    <label for="date-select" id="select-prompt" class="block text-xl font-semibold mb-3 text-dark-text tracking-wide">
+                        Select a Day to View Events
+                    </label>
+                    <select id="date-select" class="w-full p-3 border-2 border-gray-300 rounded-lg focus:border-accent-color focus:ring focus:ring-accent-color focus:ring-opacity-50 transition duration-150 text-dark-text text-lg">
+                        <!-- Options will be populated and translated by JavaScript -->
+                    </select>
+                </div>
+
+                <!-- Events List -->
+                <div class="space-y-4">
+                    <div class="flex justify-start items-center border-b border-accent-color/50 pb-2 pt-4 mb-4">
+                        <h2 class="text-2xl font-bold text-dark-text">
+                            <!-- EVENTS FOR TEXT -->
+                            <span id="events-for-text">Events for</span> <span id="selected-date-display" class="text-primary-color"></span>
+                        </h2>
+                    </div>
+                    
+                    <div id="events-list" class="grid grid-cols-1 gap-6">
+                        <!-- Event cards will be populated here -->
+                    </div>
+                    <!-- NO EVENTS MESSAGE TEXT -->
+                    <p id="no-events-message" class="text-gray-500 text-center p-8 hidden">
+                        No events scheduled for this date. Please select another.
+                    </p>
+                </div>
+            </div>
+
+
+            <!-- --- 2. PHOTOS VIEW --- -->
+            <div id="photos-view" class="w-full flex flex-col gap-6 hidden">
+                <h2 id="photos-title" class="text-3xl font-bold text-primary-color text-center mt-4">Our Journey</h2>
+
+                <div class="slider-container relative">
+                    <div id="slider-wrapper" class="slider-wrapper">
+                        <!-- Images will be loaded here by JS -->
+                    </div>
+                    
+                    <!-- Navigation Buttons -->
+                    <button onclick="changePhoto(-1)" class="absolute top-1/2 left-4 transform -translate-y-1/2 p-3 bg-white/70 hover:bg-white text-primary-color rounded-full shadow-lg transition z-20">
+                        <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7"></path></svg>
+                    </button>
+                    <button onclick="changePhoto(1)" class="absolute top-1/2 right-4 transform -translate-y-1/2 p-3 bg-white/70 hover:bg-white text-primary-color rounded-full shadow-lg transition z-20">
+                        <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"></path></svg>
+                    </button>
+
+                    <!-- Dots Indicator -->
+                    <div id="dots-container" class="absolute bottom-4 left-0 right-0 flex justify-center space-x-2 z-20">
+                        <!-- Dots will be populated by JS -->
+                    </div>
+                </div>
+            </div>
+
+        </div> <!-- End of Content Container -->
+
+        <!-- Event Details Modal (Hidden by default) -->
+        <div id="event-details-modal" class="fixed inset-0 z-50 modal-overlay flex items-center justify-center p-4 hidden" onclick="closeModal(event)">
+            
+            <!-- Modal Content -->
+            <div id="modal-content-area" class="modal-content w-full max-w-lg rounded-xl shadow-2xl transform transition-all duration-300 scale-95 md:scale-100 p-6 md:p-8" onclick="event.stopPropagation()">
+                
+                <div class="flex justify-between items-start mb-4 border-b border-accent-color/50 pb-3">
+                    <h3 id="modal-event-name" class="text-3xl font-bold text-primary-color"></h3>
+                    <button class="text-gray-500 hover:text-primary-color transition" onclick="closeModal()">
+                        <svg class="w-8 h-8" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path></svg>
+                    </button>
+                </div>
+                
+                <!-- Time -->
+                <p class="text-lg font-semibold mb-3 flex items-center text-dark-text">
+                    <svg class="w-5 h-5 mr-2 text-accent-color" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>
+                    <span id="modal-event-time"></span>
+                </p>
+
+                <!-- Location -->
+                <div class="mb-4 bg-gray-50 p-3 rounded-lg border border-gray-200">
+                    <p class="text-sm font-bold text-dark-text mb-1 flex items-center">
+                        <svg class="w-5 h-5 mr-2 text-primary-color" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.828 0l-4.243-4.243a8 8 0 1111.314 0z"></path><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 11a3 3 0 11-6 0 3 3 0 016 0z"></path></svg>
+                        <!-- VENUE LABEL TEXT -->
+                        <span id="modal-venue-text">Venue:</span>
+                    </p>
+                    <!-- Actual Location (Address is a proper noun, not translated) -->
+                    <p id="modal-event-location" class="text-base text-gray-700 pl-7"></p>
+                </div>
+
+                <!-- Map Link -->
+                <a id="modal-map-link" href="#" target="_blank" class="block w-full text-center py-3 btn-primary text-white rounded-lg font-bold shadow-md hover:shadow-lg transition duration-150 mt-4">
+                    <svg class="w-5 h-5 inline-block mr-2 -mt-1" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 20l-5.447-2.724A1 1 0 013 16.382V5.618a1 1 0 011.553-.832L12 10l7.447-3.214A1 1 0 0121 7.618v10.764a1 1 0 01-1.553.832L12 14l-5.447 2.724A1 1 0 005.447 19z"></path></svg>
+                    <!-- DIRECTIONS BUTTON TEXT -->
+                    <span id="modal-directions-text">Get Directions</span>
+                </a>
+                
+                <hr class="border-accent-color my-6 opacity-50">
+
+                <p id="modal-event-description" class="text-gray-700 leading-relaxed"></p>
+
+            </div>
+        </div>
+
+    </div>
+
+    <!-- JavaScript & Firebase Initialization -->
+    <script type="module">
+        import { initializeApp } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-app.js";
+        import { getAuth, signInAnonymously, signInWithCustomToken, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-auth.js";
+        import { getFirestore } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-firestore.js";
+
+        // Global Firebase variables (MANDATORY)
+        const appId = typeof __app_id !== 'undefined' ? __app_id : 'default-app-id';
+        const firebaseConfig = typeof __firebase_config !== 'undefined' ? JSON.parse(__firebase_config) : {};
+        const initialAuthToken = typeof __initial_auth_token !== 'undefined' ? __initial_auth_token : null;
+
+        let db, auth;
+        let userId = 'loading';
+        let currentLang = 'en'; // Default language
+
+        // --- View State and Photo Slider State ---
+        let currentView = 'schedule'; // Start on schedule view
+        let currentPhotoIndex = 0;
+        
+        // --- Image URLs: REPLACE THESE PLACEHOLDERS WITH YOUR OWN PUBLIC LINKS ---
+        // IMPORTANT: Links must be direct image URLs (ending in .jpg, .png, etc.) 
+        // from a public hosting service (like Imgur, Cloudinary, etc.)
+        const photoUrls = [
+            'https://placehold.co/800x600/67417A/ffffff?text=REPLACE+WITH+YOUR+IMAGE+1+LINK',
+            'https://placehold.co/800x600/B19CD9/4a4a4a?text=REPLACE+WITH+YOUR+IMAGE+2+LINK',
+            'https://placehold.co/800x600/4a4a4a/ffffff?text=REPLACE+WITH+YOUR+IMAGE+3+LINK',
+            'https://placehold.co/800x600/ffffff/67417A?text=REPLACE+WITH+YOUR+IMAGE+4+LINK',
+            // Add more links here, like 'https://your-domain.com/path/to/image5.jpg'
+        ];
+
+        // --- Event Images (Base64 for inline usage) ---
+        const eventImages = {
+            // Event ID 1: Haldi (from user upload)
+            '1': 'data:image/jpeg;base64,/9j/4AAQSkZJRgABAQEAYABgAAD/4QAiRXhpZgAATU0AKgAAAAgAAQESAAMAAAABAAEAAAAAAAD/2wBDAAYEBQYFBAYGBQYHBwYIChAKCgkJChQODwwQFxQYGBcUFhYaHSUfGhsjHBYWICwgIyYnKSopGR8tMC0oMCUoKSj/2wBDAQcHBwoIChMKChMoGhYaKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCj/wAARCAJdBDgDASIAAhEBAxEB/8QAHwAAAQUBAQEBAQEAAAAAAAAAAAECAwQFBgcICQoL/8QAtRAAAgEDAwIEAwUFBAQAAAF9AQIDAAQRBRIhMUEGE1FhByJxFDKBkaEII0KxwRVS0fAkM2JyggkKFhcYGRolJicoKSo0NTY3ODk6Q0RFRkdISUpTVFVWV1hZWmNkZWZnaGlqc3R1dnd4eXqDhIWGh4iJipKTlJWWl5iZmpucnZ6fn5+io6SlpqeoqaqrrK2ur6iutsrO0tba3uLm6wsPExcbHyMnK0tPU1dbX2Nna4eXq5+fo6erx8vP09fb3+Pn6/8QAHwEAAwEBAQEBAQEBAQAAAAAAAAECAwQFBgcICQoL/8QAtREAAgECBAQDBAcFBAQAAQJ3AAECAxEEBSExBhJBUQdhcRMiMoEIFEKRobHBCSMzUvAVYnLRChYkNOEl8RcYGRomJygpKjU2Nzh5OkNERUZHSElKU1RVVldYWVpkZWZnaGlqc3R1dnd4eXqDhIWGh4iJipKTlJWWl5iZmpucnZ6fn5+io6SlpqeoqaqrrK2ur6iutsrO0tba3uLm6wsPExcbHyMnK0tPU1dbX2Nna4eXq5+fo6erx8vP09fb3+Pn6/9oADAMBAAIRAxEAPwD6popeaXNAFeiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooA//Z'
+        };
+
+        // --- Mandatory Firebase Initialization (Not fully utilized but included for environment compliance) ---
+        const initializeFirebase = async () => {
+            try {
+                if (Object.keys(firebaseConfig).length === 0) {
+                    console.error("Firebase configuration is missing.");
+                    return;
+                }
+                
+                const app = initializeApp(firebaseConfig);
+                db = getFirestore(app);
+                auth = getAuth(app);
+                
+                onAuthStateChanged(auth, (user) => {
+                    if (user) {
+                        userId = user.uid;
+                        console.log("Firebase Auth State Changed. User ID:", userId);
+                    } else {
+                        console.log("Firebase Auth State Changed. User is signed out.");
+                    }
+                });
+
+                if (initialAuthToken) {
+                    await signInWithCustomToken(auth, initialAuthToken);
+                    console.log("Signed in with custom token.");
+                } else {
+                    await signInAnonymously(auth);
+                    console.log("Signed in anonymously.");
+                }
+            } catch (error) {
+                console.error("Error during Firebase initialization or sign-in:", error);
+            }
+        };
+
+        initializeFirebase();
+
+        // --- Location Constants (non-translated) ---
+        const SAJAN_PRABHA = 'Sajan Prabha Marriage Garden, Vijaynagar Square, Indore, Madhya Pradesh';
+        const SAJAN_PRABHA_MAP = 'https://www.google.com/maps/search/?api=1&query=Sajan+Prabha+Marriage+Garden+Vijaynagar+Square+Indore+Madhya+Pradesh';
+
+        const GURUDWARA = 'Gurudwara Shri Guru Nanak Satsang Darbar, LIG Square, Indore, Madhya Pradesh';
+        const GURUDWARA_MAP = 'https://www.google.com/maps/search/?api=1&query=Gurudwara+Shri+Guru+Nanak+Satsang+Darbar+LIG+Square+Indore+Madhya+Pradesh';
+
+        // --- Month Name Translation Map ---
+        const monthTranslations = {
+            en: { 'January': 'January', 'February': 'February', 'March': 'March', 'April': 'April', 'May': 'May', 'June': 'June', 'July': 'July', 'August': 'August', 'September': 'September', 'October': 'October', 'November': 'November', 'December': 'December' },
+            hi: { 'January': 'जनवरी', 'February': 'फ़रवरी', 'March': 'मार्च', 'April': 'अप्रैल', 'May': 'मई', 'June': 'जून', 'July': 'जुलाई', 'August': 'अगस्त', 'September': 'सितंबर', 'October': 'अक्टूबर', 'November': 'नवंबर', 'December': 'दिसंबर' }
+        };
+
+        // --- Language Data (Used for all translatable strings) ---
+        const languageData = {
+            en: {
+                // Home/Nav
+                home_invite: "You are invited to celebrate the love of",
+                back_to_home: "Home",
+                tile_photos: "Photos",
+                tile_schedule: "Schedule",
+                photos_title: "Our Journey",
+                // Schedule Lines
+                select_prompt: "Select a Day to View Events",
+                events_for: "Events for",
+                no_events: "No events scheduled for this date. Please select another.",
+                view_details: "View Details",
+                // Modal UI Labels
+                modal_venue: "Venue:",
+                modal_directions: "Get Directions",
+                // Event Names & Descriptions (rest of the translations are here)
+                haldi_name: 'Haldi',
+                haldi_tagline: 'Fun & Games Included!',
+                haldi_desc: 'A joyful pre-wedding ritual where a paste of turmeric is applied to the couple for blessings and a beautiful glow. There will be fun games, so participate and enjoy!',
+                khara_name: 'Khara Gharoli',
+                khara_tagline: 'Join the procession!',
+                khara_desc: 'A traditional ceremony involving carrying water pots, typically leading up to the final ceremonial bath before the wedding. Enjoy the tradition and participate to dance on dhol beats. Attire: Traditional Casual.',
+                sagan_name: 'Sagan',
+                sagan_tagline: 'Blessings and Gifts',
+                sagan_desc: 'A ceremony involving gifts and blessings from elders and family members. Attire: Formal Indian.',
+                sangeet_name: 'Sangeet & Ring Ceremony',
+                sangeet_tagline: 'Dance and Celebration',
+                sangeet_desc: 'An energetic evening of music, choreographed dances, food, and the official exchange of rings. Get ready to dance! Location: Grand Ballroom.',
+                sikh_name: 'The Sikh Wedding Ceremony (Anand Karaj)',
+                sikh_tagline: 'The sacred joining',
+                sikh_desc: 'The sacred and solemn joining of Harmit and Purnima, conducted in accordance with Sikh traditions. Please cover your head upon entry.',
+                lunch_name: 'Lunch',
+                lunch_tagline: 'Follows the ceremony',
+                lunch_desc: 'A celebratory vegetarian lunch served immediately following the ceremony. Location: Gurdwara Dining Hall.',
+                reception_name: 'Reception & Dinner',
+                reception_tagline: 'Cocktails and celebration',
+                reception_desc: 'The grand finale! Join us for an evening of cocktails, fine dining, music, and celebration as a newly married couple. Attire: Western Formal/Cocktail.',
+                rajput_name: 'The Rajput Wedding Ceremony',
+                rajput_tagline: 'The Sacred Phere',
+                rajput_desc: 'The main ceremony starting early morning, following traditional Rajput customs. This is a Rajput Style wedding, including the sacred 7 Phere, where Harmit & Purnima finally complete their wedding with divine ceremony of togetherness.',
+                vidaai_name: 'Vidaai',
+                vidaai_tagline: 'Emotional farewell',
+                vidaai_desc: 'The emotional farewell ceremony as the bride departs for her new home.',
+            },
+            hi: {
+                // Home/Nav
+                home_invite: "आप प्रेम के इस उत्सव में आमंत्रित हैं",
+                back_to_home: "होम",
+                tile_photos: "तस्वीरें",
+                tile_schedule: "कार्यक्रम",
+                photos_title: "हमारी यात्रा",
+                // Schedule Lines
+                select_prompt: "कार्यक्रम देखने के लिए दिन चुनें",
+                events_for: "के लिए कार्यक्रम",
+                no_events: "इस तारीख के लिए कोई कार्यक्रम निर्धारित नहीं है। कृपया कोई और दिन चुनें।",
+                view_details: "विवरण देखें",
+                // Modal UI Labels
+                modal_venue: "स्थान:",
+                modal_directions: "दिशा-निर्देश प्राप्त करें",
+                // Event Names & Descriptions
+                haldi_name: 'हल्दी',
+                haldi_tagline: 'मौज-मस्ती और खेल शामिल हैं!',
+                haldi_desc: 'एक joyous प्री-वेडिंग अनुष्ठान जहां आशीर्वाद और एक सुंदर चमक के लिए जोड़े पर हल्दी का पेस्ट लगाया जाता है। मज़ेदार खेल होंगे, तो भाग लें और आनंद लें!',
+                khara_name: 'खारा कढ़ौली',
+                khara_tagline: 'जुलूस में शामिल हों!',
+                khara_desc: 'यह एक पारंपरिक समारोह है जिसमें पानी के बर्तन ले जाना शामिल है, जो आमतौर पर शादी से पहले अंतिम औपचारिक स्नान तक होता है। परंपरा का आनंद लें और ढोल की थाप पर नाचने के लिए भाग लें। पोशाक: पारंपरिक कैज़ुअल।',
+                sagan_name: 'सगन',
+                sagan_tagline: 'आशीर्वाद और उपहार',
+                sagan_desc: 'यह बड़ों और परिवार के सदस्यों से उपहार और आशीर्वाद लेने का एक समारोह है। पोशाक: औपचारिक भारतीय।',
+                sangeet_name: 'संगीत और अंगूठी समारोह',
+                sangeet_tagline: 'नृत्य और उत्सव',
+                sangeet_desc: 'संगीत, कोरियोग्राफ किए गए नृत्य, भोजन और अंगूठियों के आधिकारिक आदान-प्रदान की एक ऊर्जावान शाम। नाचने के लिए तैयार हो जाइए! स्थान: ग्रैंड बॉलरूम।',
+                sikh_name: 'सिख विवाह समारोह (आनंद कारज)',
+                sikh_tagline: 'पवित्र मिलन',
+                sikh_desc: 'हरमीत और पूर्णिमा का पवित्र और गंभीर मिलन, सिख परंपराओं के अनुसार आयोजित किया गया। प्रवेश पर कृपया अपना सिर ढक लें।',
+                lunch_name: 'दोपहर का भोजन (लंच)',
+                lunch_tagline: 'समारोह के बाद',
+                lunch_desc: 'समारोह के तुरंत बाद एक celebratory शाकाहारी दोपहर का भोजन परोसा जाएगा। स्थान: गुरुद्वारा डाइनिंग हॉल।',
+                reception_name: 'रिसेप्शन और डिनर',
+                reception_tagline: 'कॉकटेल और उत्सव',
+                reception_desc: 'भव्य समापन! नवविवाहित जोड़े के रूप में कॉकटेल, बढ़िया भोजन, संगीत और उत्सव की शाम के लिए हमसे जुड़ें। पोशाक: पश्चिमी औपचारिक/कॉकटेल।',
+                rajput_name: 'राजपूत विवाह समारोह',
+                rajput_tagline: 'पवित्र फेरे',
+                rajput_desc: 'पारंपरिक राजपूत रीति-रिवाजों का पालन करते हुए सुबह जल्दी शुरू होने वाला मुख्य समारोह। यह एक राजपूत शैली की शादी है, जिसमें पवित्र 7 फेरे शामिल हैं, जहां हरमीत और पूर्णिमा अंततः एक साथ रहने के दिव्य समारोह के साथ अपनी शादी पूरी करते हैं।',
+                vidaai_name: 'विदाई',
+                vidaai_tagline: 'भावुक विदाई',
+                vidaai_desc: 'दुल्हन के अपने नए घर के लिए प्रस्थान करते समय भावनात्मक विदाई समारोह।',
+            }
+        };
+
+        // --- Event Keys (to map event to translation strings) ---
+        const eventKeys = {
+            1: 'haldi', 4: 'sangeet', 5: 'sikh', 7: 'reception', 8: 'rajput',
+            2: 'khara', 3: 'sagan', 6: 'lunch', 9: 'vidaai'
+        };
+
+        // --- Wedding Event Data ---
+        const weddingEvents = {
+            '05-December-2025': [
+                { id: 1, time: '11:00 AM - 3:00 PM', location: SAJAN_PRABHA, mapLink: SAJAN_PRABHA_MAP },
+                { id: 2, time: '3:00 PM - 5:00 PM', location: SAJAN_PRABHA, mapLink: SAJAN_PRABHA_MAP },
+                { id: 3, time: '6:00 PM - 7:00 PM', location: SAJAN_PRABHA, mapLink: SAJAN_PRABHA_MAP },
+                { id: 4, time: '7:00 PM - 11:00 PM', location: SAJAN_PRABHA, mapLink: SAJAN_PRABHA_MAP }
+            ],
+            '06-December-2025': [
+                { id: 5, time: '10:00 AM - 12:00 PM', location: GURUDWARA, mapLink: GURUDWARA_MAP },
+                { id: 6, time: '12:30 PM - 2:30 PM', location: GURUDWARA, mapLink: GURUDWARA_MAP },
+                { id: 7, time: '7:00 PM - 11:00 PM', location: SAJAN_PRABHA, mapLink: SAJAN_PRABHA_MAP }
+            ],
+            '07-December-2025': [
+                { id: 8, time: '4:00 AM', location: SAJAN_PRABHA, mapLink: SAJAN_PRABHA_MAP }, 
+                { id: 9, time: '7:00 AM', location: SAJAN_PRABHA, mapLink: SAJAN_PRABHA_MAP }
+            ]
+        };
+
+
+        const photosView = document.getElementById('photos-view');
+        const scheduleView = document.getElementById('schedule-view');
+        const photosTile = document.getElementById('photos-tile');
+        const scheduleTile = document.getElementById('schedule-tile');
+
+        const selectElement = document.getElementById('date-select');
+        const eventsListElement = document.getElementById('events-list');
+        const dateDisplayElement = document.getElementById('selected-date-display');
+        const noEventsMessage = document.getElementById('no-events-message');
+        const modal = document.getElementById('event-details-modal');
+
+        // --- View Management (SPA style) ---
+
+        window.selectView = (viewName) => {
+            currentView = viewName;
+            
+            // 1. Toggle content visibility
+            if (viewName === 'schedule') {
+                scheduleView.classList.remove('hidden');
+                photosView.classList.add('hidden');
+            } else if (viewName === 'photos') {
+                photosView.classList.remove('hidden');
+                scheduleView.classList.add('hidden');
+                initPhotoSlider(); // Initialize slider when photo view is selected
+            }
+
+            // 2. Toggle tile selection style
+            photosTile.classList.remove('tile-selected');
+            scheduleTile.classList.remove('tile-selected');
+
+            if (viewName === 'schedule') {
+                scheduleTile.classList.add('tile-selected');
+            } else if (viewName === 'photos') {
+                photosTile.classList.add('tile-selected');
+            }
+            
+            // Scroll to the content area for a better SPA feel on mobile
+            document.getElementById('content-container').scrollIntoView({ behavior: 'smooth', block: 'start' });
+        }
+
+        // --- Photo Slider Functions ---
+
+        const sliderWrapper = document.getElementById('slider-wrapper');
+        const dotsContainer = document.getElementById('dots-container');
+        
+        const initPhotoSlider = () => {
+            if (sliderWrapper.innerHTML === '' && photoUrls.length > 0) {
+                // Populate images and dots only once
+                photoUrls.forEach((url, index) => {
+                    const img = document.createElement('img');
+                    img.src = url;
+                    img.alt = `Couple Photo ${index + 1}`;
+                    img.className = 'rounded-xl';
+                    img.onerror = function() {
+                        this.src = 'https://placehold.co/800x600/CCCCCC/666666?text=Image+Unavailable';
+                    };
+                    sliderWrapper.appendChild(img);
+
+                    const dot = document.createElement('div');
+                    dot.className = 'w-3 h-3 rounded-full bg-white/50 cursor-pointer transition';
+                    dot.setAttribute('data-index', index);
+                    dot.onclick = () => goToPhoto(index);
+                    dotsContainer.appendChild(dot);
+                });
+            }
+            // Always reset to the first photo when initialized
+            currentPhotoIndex = 0;
+            updatePhotoSlider();
+        };
+
+        const updatePhotoSlider = () => {
+            if (photoUrls.length === 0) return;
+
+            // Move the wrapper to show the current photo
+            const offset = -currentPhotoIndex * 100;
+            sliderWrapper.style.transform = `translateX(${offset}%)`;
+
+            // Update dots
+            dotsContainer.querySelectorAll('div').forEach((dot, index) => {
+                if (index === currentPhotoIndex) {
+                    dot.classList.remove('bg-white/50');
+                    dot.classList.add('bg-accent-color');
+                } else {
+                    dot.classList.add('bg-white/50');
+                    dot.classList.remove('bg-accent-color');
+                }
+            });
+        };
+
+        window.changePhoto = (direction) => {
+            let newIndex = currentPhotoIndex + direction;
+            if (newIndex >= photoUrls.length) {
+                newIndex = 0; // Loop back to start
+            } else if (newIndex < 0) {
+                newIndex = photoUrls.length - 1; // Loop back to end
+            }
+            currentPhotoIndex = newIndex;
+            updatePhotoSlider();
+        };
+
+        window.goToPhoto = (index) => {
+            currentPhotoIndex = index;
+            updatePhotoSlider();
+        };
+
+        // --- Translation Logic (Simplified) ---
+
+        const translateUI = () => {
+            const lang = languageData[currentLang];
+
+            // 1. Home View Text
+            document.getElementById('home-invite').textContent = lang.home_invite;
+            document.getElementById('tile-photos-text').textContent = lang.tile_photos;
+            document.getElementById('tile-schedule-text').textContent = lang.tile_schedule;
+            
+            // 2. Schedule List Text
+            document.getElementById('select-prompt').textContent = lang.select_prompt;
+            document.getElementById('events-for-text').textContent = lang.events_for;
+            noEventsMessage.textContent = lang.no_events;
+
+            // 3. Photos View Text
+            document.getElementById('photos-title').textContent = lang.photos_title;
+            
+            // 4. Modal Text Labels (VENUE and DIRECTIONS)
+            document.getElementById('modal-venue-text').textContent = lang.modal_venue;
+            document.getElementById('modal-directions-text').textContent = lang.modal_directions;
+
+            // 5. Re-populate dates in the dropdown & re-render events/date header
+            populateDates(false); 
+            renderEvents(selectElement.value);
+        };
+
+        window.toggleLanguage = () => {
+            currentLang = (currentLang === 'en') ? 'hi' : 'en';
+            const button = document.getElementById('language-toggle');
+            button.textContent = (currentLang === 'en') ? 'हिन्दी / EN' : 'English / HI';
+            
+            translateUI();
+        };
+
+        // --- Date/Event Logic (Existing, slightly modified) ---
+        const formatDate = (dateString, lang) => {
+            const parts = dateString.split('-'); 
+            if (parts.length !== 3) {
+                const date = new Date(dateString);
+                return date.toLocaleDateString(lang === 'hi' ? 'hi-IN' : 'en-US', { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' });
+            }
+
+            const day = parts[0];
+            const monthNameEnglish = parts[1];
+            const year = parts[2];
+
+            const translatedMonthName = monthTranslations[lang][monthNameEnglish] || monthNameEnglish;
+
+            const date = new Date(`${monthNameEnglish} ${day}, ${year}`);
+            const weekday = new Intl.DateTimeFormat(lang === 'hi' ? 'hi-IN' : 'en-US', { weekday: 'long' }).format(date);
+
+            return `${weekday}, ${day} ${translatedMonthName} ${year}`;
+        }
+
+        const populateDates = (resetValue = true) => {
+            const dates = Object.keys(weddingEvents).sort((a, b) => new Date(a) - new Date(b));
+            
+            if (dates.length === 0) {
+                selectElement.innerHTML = '<option value="">No dates available</option>';
+                return;
+            }
+            
+            const selectedDate = selectElement.value;
+            selectElement.innerHTML = '';
+
+            dates.forEach(date => {
+                const option = document.createElement('option');
+                option.value = date;
+                option.textContent = formatDate(date, currentLang); 
+                selectElement.appendChild(option);
+            });
+
+            if (!resetValue && selectedDate && dates.includes(selectedDate)) {
+                selectElement.value = selectedDate;
+            } else {
+                selectElement.value = dates[0];
+            }
+            
+            if (resetValue) {
+                 renderEvents(selectElement.value);
+            }
+        };
+
+        const renderEvents = (date) => {
+            const events = weddingEvents[date] || [];
+            const lang = languageData[currentLang];
+            
+            dateDisplayElement.textContent = formatDate(date, currentLang);
+            eventsListElement.innerHTML = '';
+
+            if (events.length === 0) {
+                noEventsMessage.classList.remove('hidden');
+                return;
+            }
+
+            noEventsMessage.classList.add('hidden');
+
+            events.forEach(event => {
+                const eventKey = eventKeys[event.id];
+                const eventName = lang[`${eventKey}_name`];
+                const eventTagline = lang[`${eventKey}_tagline`];
+                const eventImageSrc = eventImages[event.id] || null; // Check for image
+                const venueName = event.location.split(',')[0].trim();
+
+                const taglineHtml = eventTagline 
+                    ? `<p class="text-sm text-accent-color font-medium italic mt-0.5">${eventTagline}</p>` 
+                    : '';
+                
+                let cardClass = 'event-card bg-white p-5 rounded-xl shadow-lg hover:shadow-2xl flex flex-col sm:flex-row justify-between items-start sm:items-center transform';
+                let contentClass = '';
+
+                // If an image exists, change the card structure and style
+                let imageHtml = '';
+                if (eventImageSrc) {
+                    cardClass = 'event-card-with-image bg-white rounded-xl shadow-lg hover:shadow-2xl flex flex-col transform';
+                    contentClass = 'p-5'; // Add padding to content inside the image card
+                    imageHtml = `<img src="${eventImageSrc}" alt="${eventName}" class="event-image rounded-t-xl mb-4 border-b-4 border-accent-color/50">`;
+                }
+
+                const card = document.createElement('div');
+                card.id = `event-${event.id}`;
+                card.className = cardClass;
+                card.setAttribute('data-event-id', event.id);
+                card.onclick = () => showEventDetails(event);
+
+                card.innerHTML = `
+                    ${imageHtml}
+                    <div class="${contentClass} w-full flex flex-col sm:flex-row justify-between items-start sm:items-center">
+                        <div>
+                            <h4 class="text-xl font-bold text-dark-text">${eventName}</h4>
+                            ${taglineHtml} 
+                            <p class="text-sm text-primary-color font-semibold mt-1 flex items-center">
+                                <svg class="w-4 h-4 mr-1 text-accent-color" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.828 0l-4.243-4.243a8 8 0 1111.314 0z"></path><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 11a3 3 0 11-6 0 3 3 0 016 0z"></path></svg>
+                                <span class="truncate max-w-xs">${venueName}</span>
+                            </p>
+                        </div>
+                        <div class="mt-3 sm:mt-0 sm:text-right">
+                            <p class="text-lg font-semibold text-primary-color flex items-center justify-start sm:justify-end">
+                                <svg class="w-5 h-5 mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>
+                                ${event.time}
+                            </p>
+                            <button class="text-sm text-gray-500 hover:text-primary-color mt-1 underline">${lang.view_details}</button>
+                        </div>
+                    </div>
+                `;
+                eventsListElement.appendChild(card);
+            });
+        };
+
+        window.showEventDetails = (event) => {
+            const lang = languageData[currentLang];
+            const eventKey = eventKeys[event.id];
+
+            const eventName = lang[`${eventKey}_name`];
+            const eventDescription = lang[`${eventKey}_desc`];
+
+            document.getElementById('modal-event-name').textContent = eventName;
+            document.getElementById('modal-event-time').textContent = event.time;
+            document.getElementById('modal-event-description').textContent = eventDescription;
+            document.getElementById('modal-event-location').textContent = event.location;
+            document.getElementById('modal-map-link').href = event.mapLink;
+
+
+            modal.classList.remove('hidden');
+            document.body.style.overflow = 'hidden';
+        }
+
+        window.closeModal = (e) => {
+            if (e && e.target.id !== 'event-details-modal') return;
+
+            modal.classList.add('hidden');
+            document.body.style.overflow = '';
+        }
+
+        // --- Event Listener for Date Change ---
+        selectElement.addEventListener('change', (event) => {
+            renderEvents(event.target.value);
+        });
+
+        // --- Initial Load ---
+        window.onload = () => {
+            populateDates();
+            // Default to 'schedule' view and highlight the correct tile
+            selectView('schedule'); 
+        };
+
+        // Handle keyboard navigation for modal (Escape key)
+        document.addEventListener('keydown', (e) => {
+            if (e.key === 'Escape' && !modal.classList.contains('hidden')) {
+                closeModal();
+            }
+        });
+    </script>
+
+</body>
+</html>
